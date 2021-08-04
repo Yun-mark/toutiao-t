@@ -39,7 +39,7 @@
         </template>
         </van-field>
         <div class="login-btn-wrap">
-        <van-button class="login-btn" type="info" block >登录</van-button>
+        <van-button class="login-btn" type="info" block @click="onLogin">登录</van-button>
       </div>
       </van-form>
     </div>
@@ -58,7 +58,7 @@ export default {
       },
       formRules: {
         mobile: [{ required: true, message: '请填写手机号' },
-          { pattern: /^1[3|5|7|9]\d{9}$/, message: '手机号格式错误' }
+          { pattern: /^1[3|5|7|8|9]\d{9}$/, message: '手机号格式错误' }
         ],
         code: [{ required: true, message: '请填写验证码' },
           { pattern: /^\d{6}$/, message: '验证码格式错误' }
@@ -79,9 +79,10 @@ export default {
       // 2.封装请求方法
       // 3.请求调用登录
       try {
-        const res = await login(this.user)
-        console.log(res)
+        const data = await login(this.user)
+
         Toast.success('登录成功')
+        this.$store.commit('setUser', data.data)
       } catch (err) {
         console.log(err)
         Toast.fail('登录失败,手机号或验证码错误')
