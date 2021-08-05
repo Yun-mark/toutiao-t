@@ -1,33 +1,33 @@
 <template>
     <div class="my-container">
       <van-cell-group v-if="user" class="my-info">
-        <van-cell :border="false" class="base-info" title="单元格" value="内容" center>
-        <van-image class="avatar" slot="icon" width="50" height="50" round fit="cover" src="https://liyun-oss1.oss-cn-beijing.aliyuncs.com/superb-class/image/img/15.jfif?versionId=CAEQDxiBgMDE6OKC2BciIDFkNjhkMDA3YmNkZTQyZThiZjVhYzJlMzkxYTU1NjQ1"></van-image>
-        <div slot="title" class="name">昵称</div>
+        <van-cell :border="false" class="base-info" center>
+        <van-image class="avatar" slot="icon" width="50" height="50" round fit="cover" :src="currentUser.photo"></van-image>
+        <div slot="title" class="name">{{ currentUser.name }}</div>
         <van-button size="small" round class="update-btn">编辑资料</van-button>
         </van-cell>
         <van-grid :border="false" class="data-info">
           <van-grid-item class="data-info-item">
             <div slot="text" class="text-wrap">
-              <div class="count">123</div>
+              <div class="count">{{ currentUser.art_count}}</div>
               <div class="text">头条</div>
             </div>
           </van-grid-item>
            <van-grid-item class="data-info-item">
             <div slot="text" class="text-wrap">
-              <div class="count">123</div>
+              <div class="count">{{ currentUser.follow_count}}</div>
               <div class="text">关注</div>
             </div>
           </van-grid-item>
            <van-grid-item class="data-info-item">
             <div slot="text" class="text-wrap">
-              <div class="count">123</div>
+              <div class="count">{{ currentUser.fans_count}}</div>
               <div class="text">粉丝</div>
             </div>
           </van-grid-item>
            <van-grid-item class="data-info-item">
             <div slot="text" class="text-wrap">
-              <div class="count">123</div>
+              <div class="count">{{ currentUser.like_count}}</div>
               <div class="text">获赞</div>
             </div>
           </van-grid-item>
@@ -36,7 +36,7 @@
 
         <div v-else class="not-login">
           <div @click="$router.push('/login')">
-            <img src="../../assets/phone.jpeg" class="mobile">
+            <img src="../../assets/mobile.png" class="mobile">
           </div>
           <div class="text">登录 / 注册</div>
         </div>
@@ -54,12 +54,26 @@
 
 <script>
 import { mapState } from 'vuex'
+import { getCurrentUser } from '@/api/user'
 export default {
   name: 'MyIndex',
+  data () {
+    return {
+      currentUser: {}
+    }
+  },
   computed: {
     ...mapState(['user'])
   },
+  created () {
+    this.loadCurrentUser()
+  },
   methods: {
+    async loadCurrentUser () {
+      const res = await getCurrentUser()
+      console.log(res)
+      this.currentUser = res.data.data
+    },
     onLogout () {
       this.$dialog.confirm({
         title: '退出提示',
@@ -104,7 +118,7 @@ export default {
           }
           .update-btn {
             height: 25px;
-            font-size: 18px;
+            font-size: 15px;
             color: #666666;
           }
         }
