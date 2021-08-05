@@ -83,6 +83,7 @@ export default {
 
         Toast.success('登录成功')
         this.$store.commit('setUser', data.data)
+        this.$router.back()
       } catch (err) {
         console.log(err)
         Toast.fail('登录失败,手机号或验证码错误')
