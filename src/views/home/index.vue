@@ -5,7 +5,7 @@
       </van-nav-bar>
 
       <!--文章频道列表-->
-      <van-tabs v-model="active" swipeable>
+      <van-tabs class="channel-tabs" v-model="active" swipeable>
         <van-tab :title="channel.name" v-for="channel in channels" :key="channel.id">
           <article-list :channel="channel"/></van-tab>
       </van-tabs>
@@ -55,6 +55,19 @@ export default {
        .van-button__text {
          font-size: 18px;
        }
+   }
+   .channel-tabs {
+     /deep/ .van-tab {
+       border-right: 1px solid #edeff3;
+       border-bottom: 1px solid #edeff3;
+       font-size: 15px;
+     }
+     /deep/ .van-tabs__line {
+       bottom: 20px;
+       width: 15px !important;
+       height: 3px;
+       background: #2ebf91;
+     }
    }
  }
 </style>
