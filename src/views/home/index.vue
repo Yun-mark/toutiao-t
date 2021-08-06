@@ -48,7 +48,7 @@ export default {
        width: 277px;
        height: 32px;
        border: none;
-       background: #5babfb;
+       background: #c2e2d1;
        .van-icon {
          font-size: 22px;
        }
