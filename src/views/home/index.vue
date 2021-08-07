@@ -9,6 +9,14 @@
         <van-tab :title="channel.name" v-for="channel in channels" :key="channel.id">
           <article-list :channel="channel"/></van-tab>
       </van-tabs>
+     <van-popup
+      v-model="isShow"
+      closeable
+      close-icon-position="top-left"
+      position="bottom"
+      get-container="body"
+      :style="{ height: '100%' }"
+    />
     </div>
 </template>
 
@@ -23,7 +31,8 @@ export default {
   data () {
     return {
       active: 2, // 控制被激活的标签
-      channels: [] // 频道列表
+      channels: [], // 频道列表
+      isShow: false
     }
   },
   created () {
