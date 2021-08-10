@@ -4,10 +4,14 @@
         <van-button slot="title" class="search-btn" icon="search" type="info" round>搜索</van-button>
       </van-nav-bar>
 
-      <!--文章频道列表-->
       <van-tabs class="channel-tabs" v-model="active" swipeable>
         <van-tab :title="channel.name" v-for="channel in channels" :key="channel.id">
           <article-list :channel="channel"/></van-tab>
+
+      <div slot="nav-right" class="wap-nav-placeholder"></div>
+      <div slot="nav-right" @click="isShow = true" class="wap-nav-wrap">
+      <van-icon name="wap-nav"/>
+      </div>
       </van-tabs>
      <van-popup
       v-model="isShow"
@@ -16,23 +20,27 @@
       position="bottom"
       get-container="body"
       :style="{ height: '100%' }"
-    />
+    >
+    <channel-edit :user-channels="channels" />
+    </van-popup>
     </div>
 </template>
 
 <script>
 import { getUserChannels } from '@/api/user'
 import ArticleList from './components/art_list'
+import ChannelEdit from './components/channel-edit'
 export default {
   name: 'HomeIndex',
   components: {
-    ArticleList
+    ArticleList,
+    ChannelEdit
   },
   data () {
     return {
       active: 2, // 控制被激活的标签
       channels: [], // 频道列表
-      isShow: false
+      isShow: true
     }
   },
   created () {
@@ -77,6 +85,25 @@ export default {
        height: 3px;
        background: #2ebf91;
      }
+   }
+
+   .wap-nav-wrap {
+     position: fixed;
+     right: 0;
+     width: 33px;
+     height: 43px;
+     background-color: #fff;
+     display: flex;
+     justify-self: center;
+     align-items: center;
+     opacity: .9;
+     .van-icon {
+       font-size: 24px;
+     }
+   }
+   .wap-nav-placeholder {
+     width: 33px;
+     flex-shrink: 0;
    }
  }
 </style>
