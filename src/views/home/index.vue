@@ -21,7 +21,9 @@
       get-container="body"
       :style="{ height: '100%' }"
     >
-    <channel-edit :user-channels="channels" />
+    <channel-edit :user-channels="channels"
+    @close="isShow = false"
+    @update-active= "onUpdateActive" />
     </van-popup>
     </div>
 </template>
@@ -51,6 +53,9 @@ export default {
       // 请求获取频道数据
       const { data } = await getUserChannels()
       this.channels = data.data.channels
+    },
+    onUpdateActive (index) {
+      this.active = index
     }
   }
 }
