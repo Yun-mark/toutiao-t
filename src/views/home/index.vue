@@ -19,11 +19,12 @@
       close-icon-position="top-left"
       position="bottom"
       get-container="body"
-      :style="{ height: '100%' }"
+      :style="{ height: '90%' }"
     >
     <channel-edit :user-channels="channels"
     @close="isShow = false"
-    @update-active= "onUpdateActive" />
+    :active="active"
+    @update-active= "active = $event" />
     </van-popup>
     </div>
 </template>
@@ -32,11 +33,16 @@
 import { getUserChannels } from '@/api/user'
 import ArticleList from './components/art_list'
 import ChannelEdit from './components/channel-edit'
+import { mapState } from 'vuex'
+import { getItem } from '@/utils/storage'
 export default {
   name: 'HomeIndex',
   components: {
     ArticleList,
     ChannelEdit
+  },
+  computed: {
+    ...mapState(['user'])
   },
   data () {
     return {
@@ -51,11 +57,20 @@ export default {
   methods: {
     async loadChannels () {
       // 请求获取频道数据
-      const { data } = await getUserChannels()
-      this.channels = data.data.channels
-    },
-    onUpdateActive (index) {
-      this.active = index
+      let channels = []
+      if (this.user) {
+        const { data } = await getUserChannels()
+        channels = data.data.channels
+      } else {
+        const localChannels = getItem('user-channels')
+        if (localChannels) {
+          channels = localChannels
+        } else {
+          const { data } = await getUserChannels()
+          channels = data.data.channels
+        }
+      }
+      this.channels = channels
     }
   }
 }

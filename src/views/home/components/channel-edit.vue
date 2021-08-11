@@ -5,20 +5,22 @@
             <van-button @click="isEdit = !isEdit" type="danger" plain round size="mini">{{ isEdit ? '完成' : '编辑'}}</van-button>
         </van-cell>
         <van-grid :gutter="10">
-            <van-grid-item @click="onUserChannelClick(index)" class="grid-item" v-for="(channel, index) in userChannels" :key="index" :text="channel.name"
+            <van-grid-item @click="onUserChannelClick(channel ,index)" class="grid-item" :class="{ active: index === active}" v-for="(channel, index) in userChannels" :key="index" :text="channel.name"
              :icon="(isEdit && index !== 0 )? 'clear' : ''"></van-grid-item>
         </van-grid>
         <van-cell center :border="false">
             <div slot="title" class="channel-title">频道推荐</div>
         </van-cell>
         <van-grid :gutter="10" >
-            <van-grid-item @click="onAdd(channel)" class="grid-item" v-for="(channel, index) in recommendChannels" :key="index" :text="channel.name"></van-grid-item>
+            <van-grid-item @click="onAdd(channel)" class="grid-item"  v-for="(channel, index) in recommendChannels" :key="index" :text="channel.name"></van-grid-item>
         </van-grid>
     </div>
 </template>
 
 <script>
-import { getAllChannels } from '@/api/channel'
+import { getAllChannels, addUserChannel, deleteUserChannel } from '@/api/channel'
+import { mapState } from 'vuex'
+import { setItem } from '@/utils/storage'
 export default {
   name: 'ChannelEdit',
   data () {
@@ -29,6 +31,7 @@ export default {
   },
   computed: {
     // 推荐的频道列表
+    ...mapState(['user']),
     // 计算属性会观测内部依赖数据的变化而重新求值
     recommendChannels () {
       return this.allChannels.filter(channel => {
@@ -45,6 +48,10 @@ export default {
     userChannels: {
       type: Array,
       required: true
+    },
+    active: {
+      type: Number,
+      required: true
     }
   },
   methods: {
@@ -52,21 +59,40 @@ export default {
       const { data } = await getAllChannels()
       this.allChannels = data.data.channels
     },
-    onAdd (channel) {
+    async onAdd (channel) {
       this.userChannels.push(channel)
+      if (this.user) {
+        await addUserChannel({
+          channels: [
+            { id: channel.id, seq: this.userChannels.length }
+          ]
+        })
+      } else {
+        setItem('user-channels', this.userChannels)
+      }
     },
-    onUserChannelClick (index) {
+    onUserChannelClick (channel, index) {
       if (this.isEdit && index !== 0) {
       // 编辑状态，删除频道
-        this.deleteChanenel(index)
+        this.deleteChanenel(channel, index)
       } else {
         // 非编辑状态，切换频道
         this.switchChannel(index)
       }
     },
 
-    deleteChanenel (index) {
-      this.userChannels.spliice(index, 1)
+    async deleteChanenel (channel, index) {
+      if (index <= this.active) {
+        this.$emit('update-active', this.active - 1)
+      }
+      this.userChannels.splice(index, 1)
+
+      // 数据持久化
+      if (this.user) {
+        await deleteUserChannel(channel.id)
+      } else {
+        setItem('user-channels', this.userChannels)
+      }
     },
     switchChannel (index) {
       this.$emit('update-active', index)
@@ -100,6 +126,12 @@ export default {
        font-size: 20px;
        color: #ccc;
      }
+    }
+
+    .active {
+      /deep/ .van-grid-item__text {
+        color: red !important;
+      }
     }
 }
 </style>
