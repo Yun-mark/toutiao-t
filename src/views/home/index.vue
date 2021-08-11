@@ -20,11 +20,11 @@
       position="bottom"
       get-container="body"
       :style="{ height: '90%' }"
+      class="channel-edit-popup"
     >
     <channel-edit :user-channels="channels"
     @close="isShow = false"
-    :active="active"
-    @update-active= "active = $event" />
+    :active="active" />
     </van-popup>
     </div>
 </template>
@@ -49,6 +49,26 @@ export default {
       active: 2, // 控制被激活的标签
       channels: [], // 频道列表
       isShow: true
+    }
+  },
+  watch: {
+    // 当切换用户、用户退出、用户登录的时候更新频道列表
+    user () {
+      // 清空频道列表
+      this.channels = []
+
+      // 初始化激活标签
+      this.active = 0
+
+      // 等待视图更新 -> 重新加载频道列表
+      // 注意：文章列表组件必须关闭滚动检查手动 onLoad，否则更新频道列表无法触发自动加载文章列表数据
+      // this.$nextTick(() => this.loadUserChannels())
+    }
+  },
+  activated () {
+    // 如果没有频道数据，则请求加载
+    if (!this.channels.length) {
+      this.loadUserChannels()
     }
   },
   created () {
@@ -125,5 +145,8 @@ export default {
      width: 33px;
      flex-shrink: 0;
    }
+   .channel-edit-popup {
+    border-radius: 10px 10px 0 0;
+  }
  }
 </style>

@@ -74,14 +74,14 @@ export default {
     onUserChannelClick (channel, index) {
       if (this.isEdit && index !== 0) {
       // 编辑状态，删除频道
-        this.deleteChanenel(channel, index)
+        this.deleteChannel(channel, index)
       } else {
         // 非编辑状态，切换频道
         this.switchChannel(index)
       }
     },
 
-    async deleteChanenel (channel, index) {
+    async deleteChannel (channel, index) {
       if (index <= this.active) {
         this.$emit('update-active', this.active - 1)
       }
