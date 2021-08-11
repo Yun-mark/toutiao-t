@@ -2,16 +2,18 @@ import request from '@/utils/request'
 
 export const getAllChannels = () => {
   return request({
-    methods: 'GET',
+    method: 'GET',
     url: '/app/v1_0/channels'
   })
 }
 
-export const addUserChannel = data => {
+export const addUserChannel = channel => {
   return request({
     method: 'PATCH',
     url: '/app/v1_0/user/channels',
-    data
+    data: {
+      channels: [channel]
+    }
   })
 }
 

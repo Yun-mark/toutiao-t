@@ -1,7 +1,7 @@
 <template>
     <div class="home-container">
       <van-nav-bar class="app-nav-bar">
-        <van-button slot="title" class="search-btn" icon="search" type="info" round>搜索</van-button>
+        <van-button slot="title" class="search-btn" icon="search" type="info" round to="/search">搜索</van-button>
       </van-nav-bar>
 
       <van-tabs class="channel-tabs" v-model="active" swipeable>
@@ -22,8 +22,10 @@
       :style="{ height: '90%' }"
       class="channel-edit-popup"
     >
-    <channel-edit :user-channels="channels"
+    <channel-edit
+    :user-channels="channels"
     @close="isShow = false"
+    @update-active="onUpdateActive"
     :active="active" />
     </van-popup>
     </div>
@@ -46,9 +48,9 @@ export default {
   },
   data () {
     return {
-      active: 2, // 控制被激活的标签
+      active: 0, // 控制被激活的标签
       channels: [], // 频道列表
-      isShow: true
+      isShow: false
     }
   },
   watch: {
@@ -91,6 +93,9 @@ export default {
         }
       }
       this.channels = channels
+    },
+    onUpdateActive (index) {
+      this.active = index
     }
   }
 }

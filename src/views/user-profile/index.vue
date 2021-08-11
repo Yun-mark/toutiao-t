@@ -14,7 +14,9 @@
     <van-cell title="性别" is-link :value="user.gender === 0 ? '男' : '女'"></van-cell>
     <van-cell title="生日" is-link :value="user.birthday"></van-cell>
     <van-popup v-model="isEditNameShow" position="bottom" :style="{ height: '100%'}">
-      <update-name @close="isEditNameShow = false"/>
+      <update-name @close="isEditNameShow = false"
+       @update-name="user.name = $event"
+       :name="user.name" />
     </van-popup>
     </div>
 </template>

@@ -60,15 +60,19 @@ export default {
       this.allChannels = data.data.channels
     },
     async onAdd (channel) {
-      this.userChannels.push(channel)
-      if (this.user) {
-        await addUserChannel({
-          channels: [
-            { id: channel.id, seq: this.userChannels.length }
-          ]
-        })
-      } else {
-        setItem('user-channels', this.userChannels)
+      try {
+        if (this.user) {
+          await addUserChannel({
+            id: channel.id,
+            seq: this.userChannels.length
+          })
+        } else {
+          setItem('user-channels', this.userChannels)
+        }
+        this.userChannels.push(channel)
+      } catch (err) {
+        console.log(err)
+        this.$toast('添加失败，请稍后重试')
       }
     },
     onUserChannelClick (channel, index) {
